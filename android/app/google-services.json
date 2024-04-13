@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "883507365124",
+    "project_id": "safeguard-home-ai",
+    "storage_bucket": "safeguard-home-ai.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:883507365124:android:3582960bd8db7b5bb2fc51",
+        "android_client_info": {
+          "package_name": "com.example.safeguard_home_ai"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDh2QO8wPkqIdDh8B3uY5rChv13ajNIims"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
