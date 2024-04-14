@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:safeguard_home_ai/screens/user_center_page.dart';
 
 class Dashboard extends StatefulWidget {
   const Dashboard({super.key});
@@ -16,7 +17,7 @@ class DashboardState extends State<Dashboard> {
     final User? currentUser = FirebaseAuth.instance.currentUser;
 
     return Scaffold(
-      backgroundColor: const Color.fromRGBO(1, 8, 24, 1),
+      backgroundColor: const Color(0xAA1A1B1E),
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
@@ -45,7 +46,15 @@ class DashboardState extends State<Dashboard> {
                         fontSize: 20,
                         color: Colors.white,
                       ),
-                      child: Text(data['username']),
+                      child: GestureDetector(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => UserCenterPage()),
+                          );
+                        },
+                        child: Text(data['username']),
+                      ),
                     );
                   }
                 }

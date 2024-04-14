@@ -33,11 +33,18 @@ class _RegisterPageState extends State<RegisterPage> {
       await firestore.collection('users').doc(userCredential.user?.uid).set({
         'username': username,
         'email': email,
+        'phone': '',
       });
 
       return userCredential;
     } catch (e) {
       print(e);
+      QuickAlert.show(
+        context: context,
+        type: QuickAlertType.error,
+        text: "Error:\n ${e.toString()}",
+        showConfirmBtn: true,
+      );
     }
 
     return null;
@@ -203,6 +210,12 @@ class _RegisterPageState extends State<RegisterPage> {
                         }
                       } catch (e) {
                         print(e);
+                        QuickAlert.show(
+                          context: context,
+                          type: QuickAlertType.error,
+                          text: "Error:\n ${e.toString()}",
+                          showConfirmBtn: true,
+                        );
                       }
                     },
                     color: const Color(0xAA3A5BDA),
