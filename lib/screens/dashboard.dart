@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:safeguard_home_ai/screens/user_center_page.dart';
 
+import 'home_page.dart';
+
 class Dashboard extends StatefulWidget {
   const Dashboard({super.key});
 
@@ -23,7 +25,6 @@ class DashboardState extends State<Dashboard> {
         elevation: 0,
         automaticallyImplyLeading: false,
         title: Row(
-          mainAxisAlignment: MainAxisAlignment.start,
           children: [
             FutureBuilder<DocumentSnapshot>(
               future: FirebaseFirestore.instance
@@ -39,7 +40,7 @@ class DashboardState extends State<Dashboard> {
                     return const Text("Error");
                   } else {
                     Map<String, dynamic> data =
-                        snapshot.data!.data() as Map<String, dynamic>;
+                    snapshot.data!.data() as Map<String, dynamic>;
                     return DefaultTextStyle(
                       style: const TextStyle(
                         fontWeight: FontWeight.bold,
@@ -50,7 +51,8 @@ class DashboardState extends State<Dashboard> {
                         onTap: () {
                           Navigator.push(
                             context,
-                            MaterialPageRoute(builder: (context) => UserCenterPage()),
+                            MaterialPageRoute(
+                                builder: (context) => const UserCenterPage()),
                           );
                         },
                         child: Text(data['username']),
@@ -61,8 +63,32 @@ class DashboardState extends State<Dashboard> {
               },
             ),
             const Padding(
-              padding: EdgeInsets.only(left: 20.0, right: 20.0),
+              padding: EdgeInsets.only(left: 20.0),
               child: Icon(Icons.account_circle, color: Colors.white),
+            ),
+            const Spacer(),
+            TextButton(
+              onPressed: () async {
+                await FirebaseAuth.instance.signOut();
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (context) => const HomePage()),
+                );
+              },
+              child: const Text(
+                'Log Out',
+                style: TextStyle(color: Colors.white),
+              ),
+            ),
+            IconButton(
+              icon: const Icon(Icons.logout, color: Colors.white),
+              onPressed: () async {
+                await FirebaseAuth.instance.signOut();
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (context) => const HomePage()),
+                );
+              },
             ),
           ],
         ),

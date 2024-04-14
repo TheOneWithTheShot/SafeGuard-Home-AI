@@ -1,6 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:quickalert/models/quickalert_type.dart';
+import 'package:quickalert/widgets/quickalert_dialog.dart';
 
 class UserCenterPage extends StatefulWidget {
   const UserCenterPage({super.key});
@@ -68,10 +70,17 @@ class _UserCenterPageState extends State<UserCenterPage> {
                               ),
                             )
                           else
-                            Text(
-                              'Username: ${data['username']}',
-                              style: const TextStyle(
-                                  fontSize: 20, fontWeight: FontWeight.bold),
+                            RichText(
+                              text: TextSpan(
+                                text: 'Username: ',
+                                style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                                children: <TextSpan>[
+                                  TextSpan(
+                                    text: '${data['username']}',
+                                    style: const TextStyle(fontSize: 18, fontWeight: FontWeight.normal),
+                                  ),
+                                ],
+                              ),
                             ),
                           if (isEditing)
                             TextField(
@@ -81,10 +90,17 @@ class _UserCenterPageState extends State<UserCenterPage> {
                               ),
                             )
                           else
-                            Text(
-                              'Email: ${data['email']}',
-                              style: const TextStyle(
-                                  fontSize: 20, fontWeight: FontWeight.bold),
+                            RichText(
+                              text: TextSpan(
+                                text: 'Email: ',
+                                style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                                children: <TextSpan>[
+                                  TextSpan(
+                                    text: '${data['email']}',
+                                    style: const TextStyle(fontSize: 18, fontWeight: FontWeight.normal),
+                                  ),
+                                ],
+                              ),
                             ),
                           if (isEditing)
                             TextField(
@@ -94,11 +110,19 @@ class _UserCenterPageState extends State<UserCenterPage> {
                               ),
                             )
                           else
-                            Text(
-                              'Phone: ${data['phone']}',
-                              style: const TextStyle(
-                                  fontSize: 20, fontWeight: FontWeight.bold),
+                            RichText(
+                              text: TextSpan(
+                                text: 'Phone: ',
+                                style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                                children: <TextSpan>[
+                                  TextSpan(
+                                    text: '${data['phone']}',
+                                    style: const TextStyle(fontSize: 18, fontWeight: FontWeight.normal),
+                                  ),
+                                ],
+                              ),
                             ),
+                          const SizedBox(height: 20),
                           if (isEditing)
                             Column(
                               children: [
@@ -116,18 +140,33 @@ class _UserCenterPageState extends State<UserCenterPage> {
                                       child: const Text('Cancel'),
                                     ),
                                     ElevatedButton(
-                                      onPressed: () {
-                                        FirebaseFirestore.instance
-                                            .collection('users')
-                                            .doc(currentUser?.uid)
-                                            .update({
-                                          'username': usernameController.text,
-                                          'email': emailController.text,
-                                          'phone': phoneController.text,
-                                        });
-                                        setState(() {
-                                          isEditing = false;
-                                        });
+                                      onPressed: () async {
+                                        try {
+                                          await FirebaseFirestore.instance
+                                              .collection('users')
+                                              .doc(currentUser?.uid)
+                                              .update({
+                                            'username': usernameController.text,
+                                            'email': emailController.text,
+                                            'phone': phoneController.text,
+                                          });
+                                          QuickAlert.show(
+                                            context: context,
+                                            type: QuickAlertType.success,
+                                            text: 'Information updated successfully!',
+                                            showConfirmBtn: true,
+                                          );
+                                          setState(() {
+                                            isEditing = false;
+                                          });
+                                        } catch (e) {
+                                          QuickAlert.show(
+                                            context: context,
+                                            type: QuickAlertType.error,
+                                            text: 'Error updating information!\n$e',
+                                            showConfirmBtn: true,
+                                          );
+                                        }
                                       },
                                       child: const Text('Update'),
                                     ),
@@ -151,7 +190,7 @@ class _UserCenterPageState extends State<UserCenterPage> {
                 },
               ),
               const SizedBox(height: 20),
-              const Text('Add Cameras', style: TextStyle(fontSize: 20)),
+              const Text('Add Cameras', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
               Row(
                 children: [
                   Expanded(
@@ -164,12 +203,37 @@ class _UserCenterPageState extends State<UserCenterPage> {
                   ),
                   const SizedBox(width: 10),
                   ElevatedButton(
-                    onPressed: () {
-                      FirebaseFirestore.instance.collection('userCamera').add({
-                        'cameraID': cameraIdController.text,
-                        'UID': currentUser?.uid,
-                      });
-                      cameraIdController.clear();
+                    onPressed: () async {
+                      try {
+                        if (cameraIdController.text.isEmpty) {
+                          QuickAlert.show(
+                            context: context,
+                            type: QuickAlertType.error,
+                            text: 'Camera ID cannot be empty!',
+                            showConfirmBtn: true,
+                          );
+                          return;
+                        }
+
+                        await FirebaseFirestore.instance.collection('userCamera').add({
+                          'cameraID': cameraIdController.text,
+                          'UID': currentUser?.uid,
+                        });
+                        QuickAlert.show(
+                          context: context,
+                          type: QuickAlertType.success,
+                          text: 'Camera added successfully!',
+                          showConfirmBtn: true,
+                        );
+                        cameraIdController.clear();
+                      } catch (e) {
+                        QuickAlert.show(
+                          context: context,
+                          type: QuickAlertType.error,
+                          text: 'Error adding camera!\n$e',
+                          showConfirmBtn: true,
+                        );
+                      }
                     },
                     child: const Text('Add'),
                   ),
