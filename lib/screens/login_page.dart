@@ -37,7 +37,7 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xAA1A1B1E),
+      backgroundColor: const Color.fromRGBO(1, 8, 24, 1),
       body: Container(
         padding: const EdgeInsets.all(30),
         child: Column(
@@ -63,6 +63,7 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                     child: TextField(
                       controller: emailController,
+                      autofillHints: const [AutofillHints.email],
                       style: const TextStyle(color: Colors.white),
                       decoration: const InputDecoration(
                         border: InputBorder.none,
@@ -77,6 +78,7 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                     child: TextField(
                       controller: passwordController,
+                      autofillHints: const [AutofillHints.password],
                       obscureText: !isPasswordVisible,
                       style: const TextStyle(color: Colors.white),
                       decoration: InputDecoration(
