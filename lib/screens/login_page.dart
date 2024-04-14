@@ -37,7 +37,7 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color.fromRGBO(1, 8, 24, 1),
+      backgroundColor: const Color(0xAA1A1B1E),
       body: Container(
         padding: const EdgeInsets.all(30),
         child: Column(
@@ -140,6 +140,12 @@ class _LoginPageState extends State<LoginPage> {
                     }
                   } catch (e) {
                     print(e);
+                    QuickAlert.show(
+                      context: context,
+                      type: QuickAlertType.error,
+                      text: 'Error loging in! Please check your credentials.',
+                      showConfirmBtn: true,
+                    );
                   }
                 },
                 color: const Color(0xAA3A5BDA),
