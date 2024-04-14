@@ -71,62 +71,58 @@ class DashboardState extends State<Dashboard> {
 
                   _isExpanded = List<bool>.filled(snapshot.data!.docs.length, false);
 
-                  return ListView(
+                  return ListView.builder(
                     shrinkWrap: true,
-                    children: snapshot.data!.docs.asMap().map((index, document) {
+                    itemCount: snapshot.data!.docs.length,
+                    itemBuilder: (BuildContext context, int index) {
+                      DocumentSnapshot document = snapshot.data!.docs[index];
                       Map<String, dynamic> data = document.data() as Map<String, dynamic>;
                       Timestamp timestamp = data['time'];
                       DateTime dateTime = timestamp.toDate();
                       String formattedTime = DateFormat('MMMM d, y H:mm:ss').format(dateTime);
 
-                      return MapEntry(index, Card(
-                        child: ExpansionPanelList(
-                          expansionCallback: (int index, bool isExpanded) {
-                            setState(() {
-                              _isExpanded[index] = !isExpanded;
-                            });
-                          },
-                          children: [
-                            ExpansionPanel(
-                              headerBuilder: (BuildContext context, bool isExpanded) {
-                                return ListTile(
-                                  title: Text(data['subject']),
-                                  subtitle: RichText(
-                                    text: TextSpan(
-                                      style: DefaultTextStyle.of(context).style,
-                                      children: <TextSpan>[
-                                        const TextSpan(text: 'Status: ', style: TextStyle(fontWeight: FontWeight.bold)),
-                                        TextSpan(text: '${data['status']}\n'),
-                                        const TextSpan(text: 'Time: ', style: TextStyle(fontWeight: FontWeight.bold)),
-                                        TextSpan(text: formattedTime),
-                                      ],
-                                    ),
-                                  ),
-                                );
-                              },
-                              body: Column(
-                                children: data['images'].map<Widget>((image) {
-                                  return FutureBuilder(
-                                    future: FirebaseStorage.instance.ref(image).getDownloadURL(),
-                                    builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
-                                      if (snapshot.connectionState == ConnectionState.waiting) {
-                                        return const CircularProgressIndicator();
-                                      } else if (snapshot.hasError) {
-                                        // Handle the error
-                                        return const Text('Error loading image');
-                                      } else {
-                                        return Image.network(snapshot.data!);
-                                      }
-                                    },
-                                  );
-                                }).toList(),
-                              ),
-                              isExpanded: _isExpanded[index],
-                            ),
-                          ],
+                      List<String> images = List<String>.from(data['images']);
+
+                      return ExpansionTile(
+                        title: Text(data['subject']),
+                        subtitle: RichText(
+                          text: TextSpan(
+                            style: DefaultTextStyle.of(context).style,
+                            children: <TextSpan>[
+                              const TextSpan(text: 'Status: ', style: TextStyle(fontWeight: FontWeight.bold)),
+                              TextSpan(text: '${data['status']}\n'),
+                              const TextSpan(text: 'Time: ', style: TextStyle(fontWeight: FontWeight.bold)),
+                              TextSpan(text: formattedTime),
+                            ],
+                          ),
                         ),
-                      ));
-                    }).values.toList(),
+                        children: [
+                          Text('UID: ${data['UID']}'), // Display the UID
+                          FutureBuilder(
+                            future: Future.wait(images.map((image) => FirebaseStorage.instance.ref().child('Images/' + image).getDownloadURL()).toList()),
+                            builder: (BuildContext context, AsyncSnapshot<List<String>> snapshot) {
+                              if (snapshot.connectionState == ConnectionState.waiting) {
+                                return const CircularProgressIndicator();
+                              } else if (snapshot.hasError) {
+                                print('Error loading images: ${snapshot.error}');
+                                print('Images: $images');
+                                // Handle the error
+                                return const Text('Error loading images');
+                              } else {
+                                return Column(
+                                  children: snapshot.data!.map<Widget>((url) => Image.network(
+                                    url,
+                                    errorBuilder: (BuildContext context, Object exception, StackTrace? stackTrace) {
+                                      return const Icon(Icons.error);
+                                    },
+                                  )).toList(),
+                                );
+                              }
+                            },
+                          ),
+                        ],
+                      );
+                    },
                   );
                 },
               ),
