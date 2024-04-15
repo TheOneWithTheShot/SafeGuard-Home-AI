@@ -2,6 +2,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:quickalert/models/quickalert_type.dart';
+import 'package:quickalert/widgets/quickalert_dialog.dart';
 import 'package:safeguard_home_ai/screens/user_center_page.dart';
 
 import 'home_page.dart';
@@ -14,6 +16,8 @@ class Dashboard extends StatefulWidget {
 }
 
 class DashboardState extends State<Dashboard> {
+  bool isInitialLoad = true;
+
   @override
   Widget build(BuildContext context) {
     final User? currentUser = FirebaseAuth.instance.currentUser;
@@ -120,15 +124,29 @@ class DashboardState extends State<Dashboard> {
                             .collection('notifications')
                             .where('UID', isEqualTo: currentUser?.uid)
                             .snapshots(),
-                        builder: (BuildContext context,
-                            AsyncSnapshot<QuerySnapshot> snapshot) {
+                        builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
                           if (snapshot.hasError) {
                             return const Text('Something went wrong');
                           }
 
-                          if (snapshot.connectionState ==
-                              ConnectionState.waiting) {
+                          if (snapshot.connectionState == ConnectionState.waiting) {
                             return const Text("Loading");
+                          }
+
+                          // Check if a new document has been added
+                          if (!isInitialLoad && snapshot.data!.docChanges.any((docChange) => docChange.type == DocumentChangeType.added)) {
+                            WidgetsBinding.instance.addPostFrameCallback((_) {
+                              QuickAlert.show(
+                                context: context,
+                                type: QuickAlertType.warning,
+                                text: 'New notification received!',
+                                showConfirmBtn: true,
+                              );
+                            });
+                          }
+
+                          if (isInitialLoad && snapshot.data!.docs.isNotEmpty) {
+                            isInitialLoad = false;
                           }
 
                           return SingleChildScrollView(
