@@ -1,5 +1,5 @@
 import 'package:page_transition/page_transition.dart';
-import 'package:safeguard_home_ai/Animations/FadeAnimation.dart';
+import 'package:safeguard_home_ai/animations/fade_animation.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:safeguard_home_ai/screens/dashboard.dart';

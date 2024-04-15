@@ -1,4 +1,4 @@
-import 'package:safeguard_home_ai/Animations/FadeAnimation.dart';
+import 'package:safeguard_home_ai/animations/fade_animation.dart';
 import 'package:safeguard_home_ai/screens/login_page.dart';
 import 'package:flutter/material.dart';
 import 'package:page_transition/page_transition.dart';
@@ -164,9 +164,9 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin{
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: <Widget>[
-                      FadeAnimation(
+                      const FadeAnimation(
                         1,
-                        const Center(
+                        Center(
                           child: Center(
                             child: Text(
                               "SafeGuard Home AI",
