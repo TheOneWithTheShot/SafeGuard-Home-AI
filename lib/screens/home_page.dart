@@ -1,4 +1,4 @@
-import 'package:safeguard_home_ai/Animations/FadeAnimation.dart';
+import 'package:safeguard_home_ai/Animations/fade_animation.dart';
 import 'package:safeguard_home_ai/screens/login_page.dart';
 import 'package:flutter/material.dart';
 import 'package:page_transition/page_transition.dart';
